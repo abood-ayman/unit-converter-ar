@@ -4,6 +4,8 @@ Convert between common units of length, weight, volume and temperature instantly
 
 **Live app:** https://abood-ayman.github.io/unit-converter-ar/
 
+**LinkedIn:** [Project entry](https://www.linkedin.com/in/abdullah-ayman-1678b737b/details/projects/)
+
 ![Unit Converter, mobile view](docs/screenshot.svg)
 
 This is a personal project, built with AI tools.
