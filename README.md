@@ -1,28 +1,27 @@
-# محول الوحدات
+# Unit Converter | محول الوحدات
 
-طول، وزن، حجم، ودرجة حرارة — تحويل فوري بين كل الوحدات الشائعة
+Convert between common units of length, weight, volume and temperature instantly. Arabic interface.
 
-**رابط الأداة (تعمل فورًا من المتصفح):** https://abood-ayman.github.io/unit-converter-ar/
+**Live app:** https://abood-ayman.github.io/unit-converter-ar/
 
-## ما الذي تقدمه؟
+![Unit Converter, mobile view](docs/screenshot.svg)
 
-- الطول: متر، كيلومتر، سنتيمتر، مليمتر، ميل، ياردة، قدم، بوصة
-- الوزن: كيلوجرام، جرام، طن، رطل (باوند)، أونصة
-- الحجم: لتر، مليلتر، متر مكعب، جالون أمريكي، كوب
-- درجة الحرارة: مئوية، فهرنهايت، كلفن
+This is a personal project, built with AI tools.
 
-## الخصوصية
+## Features
+- Length: meter, kilometer, centimeter, millimeter, mile, yard, foot, inch
+- Weight: kilogram, gram, ton, pound, ounce
+- Volume: liter, milliliter, cubic meter, US gallon, cup
+- Temperature: Celsius, Fahrenheit, Kelvin
 
-تعمل الأداة بالكامل داخل متصفحك (HTML/CSS/JavaScript فقط). لا يوجد خادم، ولا حسابات، ولا تتبّع، ولا تُرسل أو تُحفظ أي بيانات تدخلها خارج جهازك.
+## Privacy
+Everything runs in your browser. No data is stored or sent anywhere.
 
-## التقنية
+## Run locally
+Open `index.html` in any browser. It is a single static page with no dependencies.
 
-صفحة ثابتة واحدة بلا أي مكتبات خارجية، تعمل على الهاتف والحاسوب، وتُستضاف مجانًا عبر GitHub Pages.
+## Status
+Stable.
 
-## ملاحظة شفافية
-
-بُنيت هذه الأداة بمساعدة أدوات ذكاء اصطناعي، ورُوعيَت بساطتها وفائدتها المباشرة.
-
-## الرخصة
-
-MIT — انظر ملف LICENSE.
+## Copyright
+MIT License - Copyright (c) 2026 Abdullah Ayman.
