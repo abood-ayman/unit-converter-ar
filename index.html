@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>محول الوحدات | أداة مجانية</title>
+<meta name="description" content="حوّل بين وحدات الطول والوزن والحجم ودرجة الحرارة فورًا: متر، ميل، كيلوجرام، رطل، لتر، جالون، مئوية وفهرنهايت. دون إرسال بيانات.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Tahoma,'Segoe UI',Arial,sans-serif;background:#f1f5f9;color:#1e293b;line-height:1.7;min-height:100vh;display:flex;flex-direction:column}
+header{background:linear-gradient(135deg,#0f766e,#14b8a6);color:#fff;padding:1.6rem 1rem;text-align:center}
+header h1{font-size:1.5rem}
+.tagline{opacity:.92;font-size:.95rem;margin-top:.25rem}
+main{flex:1;width:100%;max-width:560px;margin:0 auto;padding:1rem}
+.card{background:#fff;border-radius:14px;padding:1.25rem;box-shadow:0 1px 4px rgba(15,23,42,.08);margin-bottom:1rem}
+.card h2{font-size:1.1rem;margin-bottom:.4rem;color:#0f766e}
+label{display:block;font-weight:700;margin:.75rem 0 .3rem}
+input,select,textarea{width:100%;padding:.7rem .8rem;border:1.5px solid #cbd5e1;border-radius:10px;font-size:1rem;font-family:inherit;background:#fff;color:#1e293b}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#0f766e;box-shadow:0 0 0 3px rgba(20,184,166,.18)}
+.row{display:flex;gap:.6rem}
+.row>*{flex:1;min-width:0}
+button{display:inline-block;width:100%;padding:.8rem;border:0;border-radius:10px;background:#0f766e;color:#fff;font-size:1.05rem;font-weight:700;cursor:pointer;font-family:inherit;margin-top:1rem}
+button:hover{background:#115e59}
+button.ghost{background:#e2e8f0;color:#1e293b}
+.result{background:#ecfdf5;border:1.5px solid #6ee7b7;border-radius:10px;padding:1rem;margin-top:1rem;font-size:1.05rem;word-break:break-word}
+.result b{color:#047857}
+.result.warn{background:#fffbeb;border-color:#fcd34d}
+.result.warn b{color:#b45309}
+.result.bad{background:#fef2f2;border-color:#fca5a5}
+.result.bad b{color:#b91c1c}
+.muted{color:#64748b;font-size:.85rem}
+footer{background:#0f172a;color:#94a3b8;text-align:center;padding:1.2rem 1rem;font-size:.85rem;line-height:1.9}
+footer a{color:#5eead4}
+table{width:100%;border-collapse:collapse;margin-top:.5rem}
+th,td{padding:.5rem;border-bottom:1px solid #e2e8f0;text-align:right;font-size:.95rem}
+.big{font-size:1.6rem;font-weight:800}
+.hidden{display:none}
+.chk{display:flex;align-items:center;gap:.5rem;margin:.3rem 0}
+.chk input{width:auto}
+
+</style>
+</head>
+<body>
+<header>
+<h1>محول الوحدات</h1>
+<p class="tagline">طول، وزن، حجم، ودرجة حرارة — تحويل فوري بين كل الوحدات الشائعة</p>
+</header>
+<main>
+<div class="card">
+<h2>التحويل</h2>
+<label for="cat">نوع الوحدات</label>
+<select id="cat" onchange="fillUnits()">
+<option value="length">طول</option>
+<option value="weight">وزن</option>
+<option value="volume">حجم</option>
+<option value="temp">درجة حرارة</option>
+</select>
+<label for="val">القيمة</label>
+<input type="number" inputmode="decimal" id="val" placeholder="1">
+<div class="row">
+<div>
+<label for="from">من</label>
+<select id="from"></select>
+</div>
+<div>
+<label for="to">إلى</label>
+<select id="to"></select>
+</div>
+</div>
+<button onclick="calc()">حوّل</button>
+</div>
+<div id="out" class="result hidden"></div>
+
+</main>
+<footer>
+<p>تعمل هذه الأداة بالكامل على جهازك، ولا تُحفظ أو تُرسل أي بيانات إلى أي خادم.</p>
+<p>أداة مجانية مفتوحة المصدر · بُنيت بمساعدة أدوات ذكاء اصطناعي · <a href="https://github.com/abood-ayman/unit-converter-ar">الكود على GitHub</a></p>
+</footer>
+<script>
+window.__jserrors=[];window.addEventListener('error',function(e){window.__jserrors.push(String(e.message))});
+const g = id => document.getElementById(id);
+
+const UNITS = {
+  length: { base: 'm', list: [['m', 'متر', 1], ['km', 'كيلومتر', 1000], ['cm', 'سنتيمتر', 0.01], ['mm', 'مليمتر', 0.001], ['mile', 'ميل', 1609.344], ['yard', 'ياردة', 0.9144], ['foot', 'قدم', 0.3048], ['inch', 'بوصة', 0.0254]] },
+  weight: { base: 'kg', list: [['kg', 'كيلوجرام', 1], ['g', 'جرام', 0.001], ['ton', 'طن', 1000], ['lb', 'رطل (باوند)', 0.45359237], ['oz', 'أونصة', 0.028349523125]] },
+  volume: { base: 'l', list: [['l', 'لتر', 1], ['ml', 'مليلتر', 0.001], ['m3', 'متر مكعب', 1000], ['gal', 'جالون أمريكي', 3.785411784], ['cup', 'كوب (٢٥٠ مل)', 0.25]] },
+  temp: { base: 'c', list: [['c', 'مئوية (°س)', 1], ['f', 'فهرنهايت (°ف)', 1], ['k', 'كلفن (°ك)', 1]] }
+};
+
+function toBase(v, unit, cat) {
+  if (cat !== 'temp') {
+    const f = UNITS[cat].list.find(u => u[0] === unit)[2];
+    return v * f;
+  }
+  if (unit === 'c') return v;
+  if (unit === 'f') return (v - 32) * 5 / 9;
+  return v - 273.15;
+}
+function fromBase(v, unit, cat) {
+  if (cat !== 'temp') {
+    const f = UNITS[cat].list.find(u => u[0] === unit)[2];
+    return v / f;
+  }
+  if (unit === 'c') return v;
+  if (unit === 'f') return v * 9 / 5 + 32;
+  return v + 273.15;
+}
+function convert(v, from, to, cat) {
+  return fromBase(toBase(v, from, cat), to, cat);
+}
+function nameOf(cat, u) { return UNITS[cat].list.find(x => x[0] === u)[1]; }
+
+function fillUnits() {
+  const cat = g('cat').value;
+  const opts = UNITS[cat].list.map(u => '<option value="' + u[0] + '">' + u[1] + '</option>').join('');
+  g('from').innerHTML = opts;
+  g('to').innerHTML = opts;
+  g('to').selectedIndex = Math.min(1, UNITS[cat].list.length - 1);
+}
+
+function trimNum(x) {
+  if (!isFinite(x)) return 'غير معرفة';
+  const r = Math.abs(x) >= 1000 || x === 0 ? Math.round(x * 100) / 100 : Math.round(x * 1000000) / 1000000;
+  return r.toLocaleString('ar-EG', { maximumFractionDigits: 6 });
+}
+
+function calc() {
+  const cat = g('cat').value;
+  const v = parseFloat(g('val').value);
+  const el = g('out');
+  el.classList.remove('hidden');
+  if (isNaN(v)) { el.innerHTML = '<p>أدخل قيمة أولًا.</p>'; return; }
+  const r = convert(v, g('from').value, g('to').value, cat);
+  el.innerHTML = '<p class="big">' + trimNum(v) + ' ' + nameOf(cat, g('from').value) + ' = <b>' + trimNum(r) + ' ' + nameOf(cat, g('to').value) + '</b></p>';
+}
+
+fillUnits();
+
+window.__test = function () {
+  const ok = Math.abs(convert(1, 'mile', 'm', 'length') - 1609.344) < 0.0001 &&
+             Math.abs(convert(100, 'c', 'f', 'temp') - 212) < 0.0001 &&
+             Math.abs(convert(0, 'c', 'k', 'temp') - 273.15) < 0.0001 &&
+             Math.abs(convert(1, 'kg', 'lb', 'weight') - 2.2046226) < 0.0001 &&
+             Math.abs(convert(1, 'gal', 'l', 'volume') - 3.785411784) < 0.000001 &&
+             Math.abs(convert(12, 'inch', 'foot', 'length') - 1) < 0.0001;
+  return { pass: ok, details: {} };
+};
+
+window.__demo = function () {
+  g('cat').value = 'length'; fillUnits();
+  g('val').value = 5; g('from').value = 'mile'; g('to').value = 'km';
+  calc();
+};
+
+</script>
+</body>
+</html>
